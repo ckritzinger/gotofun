@@ -1,7 +1,7 @@
 databases:
   - name: gotofun
-    databaseName: gotofun-production
-    user: gotofun-db-user
+    databaseName: gotofun
+    user: gotofun
     plan: free
 
 services:
@@ -9,9 +9,9 @@ services:
     name: mysite
     runtime: ruby
     plan: free
-    buildCommand: "./bin/render-build.sh"
+    buildCommand: "./gotofun-backend/bin/render-build.sh"
     # preDeployCommand: "./bin/rails db:migrate" # preDeployCommand only available on paid instance types
-    startCommand: "./bin/rails server"
+    startCommand: "./gotofun-backend/bin/rails server"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
