@@ -62,3 +62,31 @@ Activity.find_or_create_by(
     lat: -34.0075,
     long: 22.7512
 )
+
+Activity.find_or_create_by(
+    name: "Redberry Farm",
+    description: "Family-friendly destination with strawberry picking, hedge maze, mini train, pony rides, and more.",
+    lat: -33.9669,
+    long: 22.4572
+)
+
+Activity.find_or_create_by(
+    name: "Outeniqua Transport Museum",
+    description: "A museum showcasing the history of South African Railways with a collection of steam locomotives and coaches.",
+    lat: -33.9630,
+    long: 22.4597
+)
+
+Activity.find_or_create_by(
+    name: "George Peak Hike",
+    description: "A strenuous trail to the summit of George Peak offering spectacular views of the region.",
+    lat: -33.9630,
+    long: 22.4597
+)
+
+Activity.find_or_create_by(
+    name: "The Farm Coffee Shop",
+    description: "Charming coffee shop offering a variety of healthy options, pizza, and picturesque views.",
+    lat: -34.0361,
+    long: 23.0466
+)
