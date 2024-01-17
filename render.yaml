@@ -11,7 +11,7 @@ services:
     plan: free
     buildCommand: "cd gotofun-backend && ./bin/render-build.sh"
     # preDeployCommand: "./bin/rails db:migrate" # preDeployCommand only available on paid instance types
-    startCommand: "cd gotofun-backend && ./bin/rails server"
+    startCommand: "cd gotofun-backend && ./bin/rails db:migrate && ./bin/rails db:seed && ./bin/rails server"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
