@@ -14,7 +14,7 @@ class ActivitiesProvider {
 
   Future<void> fetchActivities() async {
     final Box<String> settings = Hive.box<String>('settings');
-    final String host = settings.get('host') ?? 'https://gotofun-backend.onrender.com';
+    final String host = settings.get('host') ?? 'https://gotofun-backend.fly.dev';
     final Response<dynamic> response = await _dio.get<dynamic>(
       '$host/activities.json',
     );
