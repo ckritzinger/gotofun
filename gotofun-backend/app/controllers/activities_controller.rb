@@ -2,6 +2,9 @@ class ActivitiesController < ApplicationController
   before_action :set_activity, only: %i[ show edit update destroy ]
   http_basic_authenticate_with name: "admin", password: "12345", except: :index
 
+  # skip csrf token check for json requests
+  skip_before_action :verify_authenticity_token
+
   # GET /activities or /activities.json
   def index
     @activities = Activity.all

@@ -1,7 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:gotofun/service/activities_provider.dart';
 
 import '../model/activity.dart';
+import '../service/powersync.dart';
 
 class ActivitiesList extends StatelessWidget {
   const ActivitiesList({super.key});
@@ -9,27 +11,44 @@ class ActivitiesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Activities'),
-      ),
-      body: const _ActivitiesListBody(),
-    );
+        appBar: AppBar(
+          title: const Text('Activities'),
+        ),
+        body: StreamBuilder(
+          stream: watchActivities(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return _ActivitiesListBody(snapshot.data as List<Activity>);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            final int time = DateTime.now().millisecondsSinceEpoch;
+            final Random random = Random();
+            addActivity("title-$time", "description-$time", random.nextDouble(), random.nextDouble());
+          },
+          tooltip: '+',
+          child: const Icon(Icons.add),
+        ));
   }
 }
 
 class _ActivitiesListBody extends StatelessWidget {
-  const _ActivitiesListBody();
-  ActivitiesProvider get provider => ActivitiesProvider.instance;
+  final List<Activity> activities;
+  const _ActivitiesListBody(this.activities);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemBuilder: (context, index) {
         return _ActivityTile(
-          activity: provider.activities[index],
+          activity: activities[index],
         );
       },
-      itemCount: provider.activities.length,
+      itemCount: activities.length,
     );
   }
 }
