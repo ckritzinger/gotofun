@@ -19,10 +19,12 @@ class KeysController < ApplicationController
       iat: Time.now.to_i,
       exp: 59.minutes.from_now.to_i,
       kid: key_id,
-      aud: "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com",
-      iss: "https://gotofun-backend.fly.dev",
       sub: current_user.id,
       user_id: current_user.id,
+
+      # replace the following two values with your own
+      aud: "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com",
+      iss: "https://gotofun-backend.fly.dev",
     }
 
     jwt = JWT.encode(token_payload, private_key, 'RS256', { typ: 'JWT', kid: kid })
@@ -33,7 +35,7 @@ class KeysController < ApplicationController
 
   # mock current user
   def current_user
-    return OpenStruct.new(id: USER_ID)
+    return OpenStruct.new(id: params[:id] || 1)
   end
 
   def key_id
