@@ -7,8 +7,8 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';
+import '../../config.dart';
 
-const String powersyncInstanceEndpoint = "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com";
 const schema = Schema([
   Table('activities', [
     Column.text('title'),

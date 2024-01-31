@@ -1,16 +1,19 @@
-# gotofun
+# gotofun-app
 
-A new Flutter project.
+A sample offline-first Flutter app that connects to [PowerSync](https://www.powersync.com/) and a backend service.
 
-## Getting Started
+This project is a starting point for a Flutter application that uses Powersync.
 
-This project is a starting point for a Flutter application.
+### Setup
 
-A few resources to get you started if this is your first Flutter project:
+1. Edit ./lib/config.dart
+2. change `powersyncInstanceEndpoint` to your PowerSync instance endpoint
+3. change `backendApiHost` to your backend host
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Running the app
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+flutter pub get
+flutter run
+```
+

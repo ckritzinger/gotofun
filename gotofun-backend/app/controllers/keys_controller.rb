@@ -1,5 +1,8 @@
 class KeysController < ApplicationController
 
+  POWERSYNC_ENDPOINT="https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com"
+  API_ENDPOINT="https://gotofun-backend.fly.dev"
+
   # render JWKS
   def index
     desc_params = {
@@ -23,8 +26,8 @@ class KeysController < ApplicationController
       user_id: current_user.id,
 
       # replace the following two values with your own
-      aud: "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com",
-      iss: "https://gotofun-backend.fly.dev",
+      aud: POWERSYNC_ENDPOINT,
+      iss: API_ENDPOINT,
     }
 
     jwt = JWT.encode(token_payload, private_key, 'RS256', { typ: 'JWT', kid: key_id })
