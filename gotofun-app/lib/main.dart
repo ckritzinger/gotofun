@@ -1,21 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gotofun/service/activities_provider.dart';
 import 'package:gotofun/view/activities_list.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 
 import '../service/powersync.dart';
 
 void main() async {
-  log();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  await Hive.initFlutter();
-  await Hive.openBox<String>('settings');
-  await ActivitiesProvider.instance.fetchActivities();
+  log();
   await openDatabase();
   await connectPowerSync();
-  final sub = watchActivities();
+
   runApp(const MyApp());
 }
 

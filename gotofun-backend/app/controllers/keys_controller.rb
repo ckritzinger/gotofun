@@ -27,7 +27,7 @@ class KeysController < ApplicationController
       iss: "https://gotofun-backend.fly.dev",
     }
 
-    jwt = JWT.encode(token_payload, private_key, 'RS256', { typ: 'JWT', kid: kid })
+    jwt = JWT.encode(token_payload, private_key, 'RS256', { typ: 'JWT', kid: key_id })
     render plain: jwt, status: 200
   end
 

@@ -1,26 +1,32 @@
-import 'package:dio/dio.dart';
-import 'package:hive/hive.dart';
+import 'package:powersync/sqlite3.dart';
 
 import '../model/activity.dart';
+import 'powersync.dart';
 
 class ActivitiesProvider {
   static final ActivitiesProvider instance = ActivitiesProvider();
+  addActivity(String title, String description, double lat, double long) async {
+    await db.execute(
+        'INSERT INTO activities(id, title, description, lat, long, created_at, updated_at) VALUES(uuid(),?, ?, ?, ?, ?, ?)',
+        [title, description, lat, long, DateTime.now().toIso8601String(), DateTime.now().toIso8601String()]);
+  }
 
-  final Dio _dio = Dio();
+  List<Activity> resultsSetToActivityList(ResultSet resultSet) {
+    final List<Activity> activities = [];
+    final Iterator<Row> rows = resultSet.iterator;
+    while (rows.moveNext()) {
+      final Row row = rows.current;
+      activities.add(Activity(
+        title: row['title'] as String,
+        description: row['description'] as String,
+        lat: row['lat'] as String,
+        long: row['long'] as String,
+      ));
+    }
+    return activities;
+  }
 
-  final List<Activity> _activities = <Activity>[];
-
-  List<Activity> get activities => _activities;
-
-  Future<void> fetchActivities() async {
-    final Box<String> settings = Hive.box<String>('settings');
-    final String host = settings.get('host') ?? 'https://gotofun-backend.fly.dev';
-    final Response<dynamic> response = await _dio.get<dynamic>(
-      '$host/activities.json',
-    );
-    _activities.clear();
-    _activities.addAll(response.data.map<Activity>((dynamic json) {
-      return Activity.fromJson(json as Map<String, dynamic>);
-    }));
+  Stream<List<Activity>> watchActivities() {
+    return db.watch('SELECT * FROM activities order by created_at asc').map(resultsSetToActivityList);
   }
 }

@@ -2,21 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:gotofun/model/activity.dart';
-import 'package:hive/hive.dart';
+import 'package:gotofun/service/activities_api.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';
-import 'package:powersync/sqlite3.dart';
 
-// create_table "activities", force: :cascade do |t|
-//   t.string "title"
-//   t.text "description"
-//   t.decimal "lat", precision: 10, scale: 6
-//   t.decimal "long", precision: 10, scale: 6
-//   t.datetime "created_at", null: false
-//   t.datetime "updated_at", null: false
-// end
+const String powersyncInstanceEndpoint = "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com";
 const schema = Schema([
   Table('activities', [
     Column.text('title'),
@@ -27,14 +19,7 @@ const schema = Schema([
     Column.text('updated_at')
   ])
 ]);
-
 late PowerSyncDatabase db;
-
-addActivity(String title, String description, double lat, double long) async {
-  await db.execute(
-      'INSERT INTO activities(id, title, description, lat, long, created_at, updated_at) VALUES(uuid(),?, ?, ?, ?, ?, ?)',
-      [title, description, lat, long, DateTime.now().toIso8601String(), DateTime.now().toIso8601String()]);
-}
 
 connectPowerSync() async {
   // DevConnector stores credentials in-memory by default.
@@ -44,10 +29,8 @@ connectPowerSync() async {
   try {
     // Connect to PowerSync service and start sync.
     db.connect(connector: connector);
-    print("connected to powersync, we hope");
   } catch (e) {
-    print("not able to connect to powersync");
-    print(e);
+    Logger.root.severe('Failed to connect to PowerSync service: $e');
   }
 }
 
@@ -57,45 +40,17 @@ openDatabase() async {
   // Setup the database.
   db = PowerSyncDatabase(schema: schema, path: path);
   await db.initialize();
-
-  // Run local statements.
-  final time = DateTime.now().toIso8601String();
-}
-
-List<Activity> resultsSetToActivityList(ResultSet resultSet) {
-  final List<Activity> activities = [];
-  final Iterator<Row> rows = resultSet.iterator;
-  while (rows.moveNext()) {
-    final Row row = rows.current;
-    activities.add(Activity(
-      title: row['title'] as String,
-      description: row['description'] as String,
-      lat: row['lat'] as String,
-      long: row['long'] as String,
-    ));
-  }
-  return activities;
-}
-
-Stream<List<Activity>> watchActivities() {
-  return db.watch('SELECT * FROM activities order by created_at asc').map(resultsSetToActivityList);
 }
 
 class SimpleConnector extends PowerSyncBackendConnector {
   final Dio _dio = Dio();
+  final ActivitiesApi _api = ActivitiesApi();
 
   @override
   Future<PowerSyncCredentials?> fetchCredentials() async {
-    print("fetching credentials");
-    final Box<String> settings = Hive.box<String>('settings');
-    final String host = settings.get('host') ?? 'https://gotofun-backend.fly.dev';
-    final Response<dynamic> response = await _dio.get<dynamic>(
-      '$host/keys/1',
-    );
-    String endpoint = "https://65a8f82ce4d47fade98f24dd.powersync.journeyapps.com";
-    String token = response.data;
+    final token = await _api.token();
     DateTime? expiresAt = getExpiryDate(token);
-    return PowerSyncCredentials(endpoint: endpoint, expiresAt: expiresAt, token: token, userId: '');
+    return PowerSyncCredentials(endpoint: powersyncInstanceEndpoint, expiresAt: expiresAt, token: token, userId: '');
   }
 
   @override
@@ -104,19 +59,15 @@ class SimpleConnector extends PowerSyncBackendConnector {
     if (transaction == null) return Future.value();
     for (var op in transaction.crud) {
       if (op.op == UpdateType.put) {
-        var auth = 'Basic ${base64Encode(utf8.encode('admin:12345'))}';
-        final Response<dynamic> response = await _dio.post<dynamic>(
-          'http://192.168.3.173:3000/activities.json',
-          data: op.opData,
-          options: Options(headers: <String, String>{'authorization': auth}),
-        );
-        print(response.data);
+        print(op.table);
+        await _api.putActivity(op.opData!);
       }
     }
     await transaction.complete();
     return Future.value();
   }
 
+  // the function in the original code doesn't handle Base64 without padding
   static DateTime? getExpiryDate(String token) {
     try {
       List<String> parts = token.split('.');
@@ -134,8 +85,7 @@ class SimpleConnector extends PowerSyncBackendConnector {
       }
       return null;
     } catch (e) {
-      print("error getting expiry date");
-      print(e);
+      Logger.root.warning('Failed to parse token: $e');
       return null;
     }
   }
