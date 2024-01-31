@@ -1,3 +1,4 @@
+import 'package:powersync/powersync.dart';
 import 'package:powersync/sqlite3.dart';
 
 import '../model/activity.dart';
@@ -24,6 +25,10 @@ class ActivitiesProvider {
       ));
     }
     return activities;
+  }
+
+  Stream<SyncStatus> status() {
+    return db.statusStream;
   }
 
   Stream<List<Activity>> watchActivities() {

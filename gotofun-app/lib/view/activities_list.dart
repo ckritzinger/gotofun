@@ -14,15 +14,38 @@ class ActivitiesList extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Activities'),
         ),
-        body: StreamBuilder(
-          stream: ActivitiesProvider.instance.watchActivities(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _ActivitiesListBody(snapshot.data as List<Activity>);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+        body: Column(
+          children: [
+            StreamBuilder(
+              stream: ActivitiesProvider.instance.status(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                    color: snapshot.data!.connected ? Colors.green : Colors.red,
+                    width: double.infinity,
+                    child: Text(
+                      "Last Updated: ${snapshot.data!.lastSyncedAt?.toString() ?? "Unknown"}",
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: ActivitiesProvider.instance.watchActivities(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return _ActivitiesListBody(snapshot.data as List<Activity>);
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
