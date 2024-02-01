@@ -15,6 +15,7 @@ It performs three main functions:
 2. Edit gotofun-backend/app/controllers/keys_controller.rb
 3. Change `POWERSYNC_ENDPOINT` to your PowerSync instance endpoint
 4. Change `API_ENDPOINT` to the base URL where you will host this app
+5. Regenerate the credentials (details below): `rm config/credentials.yaml.emc && rails credentials:edit`
 
 ## Running the app
 
@@ -29,3 +30,20 @@ To do so, you will need to use a tool like [ngrok](https://ngrok.com/) to expose
 Then, you will need to edit gotofun-app/lib/config.dart and change `backendApiHost` to the ngrok URL.
 
 You will also need to change `API_ENDPOINT` to the ngrok URL.
+
+## Regenerating the credentials
+
+your credentials.yaml.emc should look something like this:
+
+```
+secret_key_base: 2c2d5b420a58...
+admin_password: supersecretyouwillneverguess
+private_key: |-
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEpQIBAAKCAQEA2yAvLaeOudwzbf4Gkl6x2dheb/onCzD+TsGOiEgdPf1cjX4w
+  ...
+  ...
+  -----END RSA PRIVATE KEY-----
+```
+
+Generate a private key in your rails console with: `OpenSSL::PKey::RSA.generate(2048).to_s`
