@@ -13,7 +13,7 @@ The backend also implements authentication endpoints as required by PowerSync (J
 
 1. Deploy the Rails app to a server somewhere. I used Fly.io.
 2. Deploy the Flutter app to a device or emulator.
-3. Read the individual READMEs for the app and backend for detailed information.
+3. Read the individual [backend](./gotofun-backend/README.md) and [app](./gotofun-app/README.md) READMEs for detailed setup info.
 
 ## Fly.io Setup
 
