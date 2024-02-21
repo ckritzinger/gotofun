@@ -1,6 +1,6 @@
 # gotofun-backend
 
-This is a simple rails application that serves as a backend for the gotofun-app.
+This is a simple rails application that serves as a backend for the gotofun-app, supporting the PowerSync sync layer.
 
 It performs three main functions:
 

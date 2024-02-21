@@ -1,9 +1,14 @@
 # gotofun
 
-This is a sample application that demonstrates how to use [PowerSync](https://www.powersync.com/)
-to build an offline-first Flutter app with a Rails backend.
+This is a sample application that demonstrates a local-first architecture for a Flutter app with a Rails backend, using [PowerSync](https://www.powersync.com/) as a sync layer.  Local-first means that the app works offline and syncs data when it comes back online. This is a useful pattern for mobile apps, especially when the app needs to work in areas with poor connectivity.
 
-The app displays a list of fun things to do. It also provides some example code for adding new items to the DB. Building a mobile UI for this is left as an exercise for the reader.
+Local-first also has some useful ancillary benefits:
+
+ - App startup is faster because the app can display data from the local cache before any network requests are complete.
+ - All data is stored in a SQLite database, making local state management simpler.
+ - Much of the complexity of handling API interaction, including network errors and retries is handled by PowerSync.
+
+The app displays a list of fun things to do. It also provides some example code for adding new items to the DB. Building a full mobile mobile UI for this is left as an exercise for the reader.
 
 The backend provides some scaffolding for adding new items and a simple REST API that can be used for updates. Both of these are very lightly modified Rails scaffolding.
 

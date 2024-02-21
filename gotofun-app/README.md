@@ -1,8 +1,8 @@
 # gotofun-app
 
-A sample offline-first Flutter app that connects to [PowerSync](https://www.powersync.com/) and a backend service.
+A sample offline-first Flutter app that connects to [PowerSync](https://www.powersync.com/) as a sync layer, and a Rails backend service.
 
-This project is a starting point for a Flutter application that uses Powersync.
+This project is a demo of the utility of local-first architecture and serves as a starting point for a Flutter application that uses Powersync.
 
 ### Setup
 
